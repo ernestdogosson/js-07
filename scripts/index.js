@@ -35,34 +35,67 @@ const words = [
 //Initializing word
 let randomWord;
 
-function addWordToDom(array) {
-  randomWord = array[Math.floor(Math.random() * array.length)];
+const addWordToDom = (array) => {
+  let newWord;
 
-  return randomWord;
-}
+  // Keep picking until we get a different word
+  do {
+    newWord = array[Math.floor(Math.random() * array.length)];
+  } while (newWord === randomWord && array.length > 1);
 
+  randomWord = newWord;
+  word.innerHTML = randomWord;
+};
+
+// Start the game
 addWordToDom(words);
-document.getElementById("word").innerHTML = randomWord;
 
 //Initializing score
 let score = 0;
 
-const input = document.getElementById("text");
-input.addEventListener("keypress", function (e) {
+text.addEventListener("keypress", function (e) {
   if (e.key === "Enter") {
     const userInput = this.value;
     this.value = "";
 
-    updateScore(randomWord, userInput); // Use userinput within function
+    updateScore(randomWord, userInput);
   }
 });
 
-function updateScore(word, userInput) {
+const updateScore = (word, userInput) => {
   if (word === userInput) {
-    score += 1;
-    document.getElementById("score").innerHTML = score;
+    score++;
+    scoreEl.innerText = score;
+
+    // Add bonus time
+    time += 5;
+
+    // Generate and display new word
+    addWordToDom(words);
   }
-}
+};
 
 //Initializing time
 let time = 10;
+
+const updateTime = () => {
+  time--;
+  timeEl.innerHTML = time;
+  if (time === 0) {
+    clearInterval(timer);
+    gameOver();
+  }
+};
+
+const timer = setInterval(updateTime, 1000);
+
+// Game Over
+const gameOver = () => {
+  endgameEl.style.display = "flex";
+  const endHeader = document.createElement("h1");
+  endHeader.textContent = "Game Over!";
+  endgameEl.append(endHeader);
+  const endMessage = document.createElement("p");
+  endMessage.textContent = "Your final score is: " + score;
+  endgameEl.append(endMessage);
+};
