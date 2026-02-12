@@ -117,6 +117,31 @@ const updateScore = (word, userInput) => {
   }
 };
 
+// Keyboard event handler for restarting (defined once to avoid listener leaks)
+const handleKeyPress = (e) => {
+  if (e.key === "Enter") {
+    restart();
+  }
+};
+
+// Restart function
+const restart = () => {
+  clearInterval(timer);
+  score = 0;
+  scoreEl.textContent = score;
+  setTimeByDifficulty(difficulty);
+  time = timeValue;
+  timeEl.textContent = time;
+  endgameEl.style.display = "none";
+  endgameEl.innerHTML = "";
+  text.value = "";
+  text.focus();
+  addWordToDom(words);
+  startTimer();
+
+  document.removeEventListener("keydown", handleKeyPress);
+};
+
 // Game Over
 const gameOver = () => {
   endgameEl.style.display = "flex";
@@ -137,32 +162,8 @@ const gameOver = () => {
   restartGame.className = "restart-btn";
   endgameEl.append(restartGame);
 
-  // Restart function
-  const restart = () => {
-    score = 0;
-    scoreEl.textContent = score;
-    setTimeByDifficulty(difficulty);
-    time = timeValue;
-    timeEl.textContent = time;
-    endgameEl.style.display = "none";
-    endgameEl.innerHTML = "";
-    text.value = "";
-    text.focus();
-    addWordToDom(words);
-    startTimer();
-
-    document.removeEventListener("keydown", handleKeyPress); // Remove keyboard listener after restart
-  };
-
-  // Keyboard event handler
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      restart();
-    }
-  };
-
-  restartGame.addEventListener("click", restart); // Restart on click
-  document.addEventListener("keydown", handleKeyPress); // Restart on Enter key
+  restartGame.addEventListener("click", restart);
+  document.addEventListener("keydown", handleKeyPress);
 };
 
 // Settings button - toggle settings display
